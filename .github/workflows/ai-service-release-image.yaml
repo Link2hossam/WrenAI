@@ -37,9 +37,11 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Prepare tag name
         id: tag-preparation
+        env:
+          INPUT_TAG_NAME: ${{ github.event.inputs.tag_name }}
         run: |
-          if [ -n "${{ github.event.inputs.tag_name }}" ]; then
-            tag_name=${{ github.event.inputs.tag_name }}
+          if [ -n "$INPUT_TAG_NAME" ]; then
+            tag_name=$INPUT_TAG_NAME
           else
             tag_name=commit-$(git log -1 --pretty=%h)
           fi
