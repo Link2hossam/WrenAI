@@ -37,11 +37,14 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Prepare tag name
         id: tag-preparation
+        env:
+          INPUT_DOCKER_IMAGE_TAG_NAME: ${{ github.event.inputs.docker_image_tag_name }}
+          REF_NAME: ${{ github.ref_name }}
         run: |
-          if [ -n "${{ github.event.inputs.docker_image_tag_name }}" ]; then
-            tag_name=${{ github.event.inputs.docker_image_tag_name }}
+          if [ -n "$INPUT_DOCKER_IMAGE_TAG_NAME" ]; then
+            tag_name=$INPUT_DOCKER_IMAGE_TAG_NAME
           else
-            tag_name=$(echo ${{ github.ref_name }} | sed 's/[^a-zA-Z0-9]/-/g')-$(git log -1 --pretty=%h)
+            tag_name=$(echo $REF_NAME | sed 's/[^a-zA-Z0-9]/-/g')-$(git log -1 --pretty=%h)
           fi
           echo "TAG_NAME=$tag_name" >> $GITHUB_OUTPUT
       - name: Set up Docker Buildx

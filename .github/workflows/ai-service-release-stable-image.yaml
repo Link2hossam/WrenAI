@@ -71,14 +71,16 @@ jobs:
             echo EOF
           } >> $GITHUB_ENV
       - name: Upgrade AI Service version
+        env:
+          VERSION: ${{ github.event.inputs.version }}
+          CHANGE_LOG: ${{ env.CHANGE_LOG }}
         run: |
-          version=${{ github.event.inputs.version }}
-          poetry version --next-phase $version
+          poetry version --next-phase $VERSION
           git add pyproject.toml
-          git commit -m "Upgrade AI Service version to $version"
+          git commit -m "Upgrade AI Service version to $VERSION"
           git push
-          git tag -a "release/ai-service/$version" -m "${{ env.CHANGE_LOG }}"
-          git push origin "release/ai-service/$version"
+          git tag -a "release/ai-service/$VERSION" -m "$CHANGE_LOG"
+          git push origin "release/ai-service/$VERSION"
   build-image:
     needs: upgrade-ai-service-version
     strategy:
